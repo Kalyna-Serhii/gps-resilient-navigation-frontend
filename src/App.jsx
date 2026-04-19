@@ -1,8 +1,15 @@
-import HomePage from './pages/HomePage';
-import './styles/global.css';
+import { RouterProvider } from 'react-router-dom';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import theme from './styles/theme';
+import router from './router';
 
 function App() {
-  return <HomePage />;
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  );
 }
 
 export default App;
