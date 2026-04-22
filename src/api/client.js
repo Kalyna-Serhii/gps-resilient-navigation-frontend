@@ -27,7 +27,6 @@ export async function apiRequest(url, options = {}) {
     } catch {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      localStorage.removeItem('userName');
       window.location.href = '/login';
     }
   }

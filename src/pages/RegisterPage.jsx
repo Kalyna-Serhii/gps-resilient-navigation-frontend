@@ -1,18 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  Container,
-  Link,
-  TextField,
-  Typography,
-  Alert,
-  Paper,
-  Divider,
-  IconButton,
-  InputAdornment,
-} from '@mui/material';
+import { Box, Button, Container, Link, TextField, Typography, Alert, Paper, Divider, IconButton, InputAdornment } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { register } from '../api/auth';
@@ -24,11 +12,11 @@ function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -36,7 +24,6 @@ function RegisterPage() {
       const data = await register(form);
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
-      localStorage.setItem('userName', data.user.name);
       navigate('/');
     } catch (err) {
       setError(err.message);
@@ -67,25 +54,8 @@ function RegisterPage() {
           )}
 
           <Box component="form" onSubmit={handleSubmit}>
-            <TextField
-              label="Ім'я"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              fullWidth
-              required
-              margin="normal"
-            />
-            <TextField
-              label="Email"
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              fullWidth
-              required
-              margin="normal"
-            />
+            <TextField label="Ім'я" name="name" value={form.name} onChange={handleChange} fullWidth required margin="normal" />
+            <TextField label="Email" name="email" type="email" value={form.email} onChange={handleChange} fullWidth required margin="normal" />
             <TextField
               label="Пароль"
               name="password"
@@ -107,14 +77,7 @@ function RegisterPage() {
                 },
               }}
             />
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              size="large"
-              disabled={loading}
-              sx={{ mt: 2 }}
-            >
+            <Button type="submit" variant="contained" fullWidth size="large" disabled={loading} sx={{ mt: 2 }}>
               {loading ? 'Реєстрація...' : 'Зареєструватись'}
             </Button>
           </Box>
@@ -125,14 +88,13 @@ function RegisterPage() {
             fullWidth
             variant="outlined"
             startIcon={<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width={18} />}
-            sx={{ borderColor: 'divider', color: 'text.primary', '&:hover': { borderColor: 'text.secondary', backgroundColor: 'action.hover' } }}
+            sx={{ 'borderColor': 'divider', 'color': 'text.primary', '&:hover': { borderColor: 'text.secondary', backgroundColor: 'action.hover' } }}
           >
             Зареєструватись через Google
           </Button>
 
           <Typography align="center" sx={{ mt: 2 }}>
-            Вже є акаунт?{' '}
-            <Link href="/login">Увійти</Link>
+            Вже є акаунт? <Link href="/login">Увійти</Link>
           </Typography>
         </Paper>
       </Box>

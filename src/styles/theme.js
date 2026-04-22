@@ -38,7 +38,7 @@ export const MAP_TILE_OPTIONS = [
   },
   {
     id: 'osm',
-    label: 'Рельєфна',
+    label: 'Детальна',
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   },
 ];

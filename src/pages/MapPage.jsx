@@ -6,6 +6,7 @@ import {
   Button,
   Paper,
   List,
+  ListItem,
   ListItemButton,
   ListItemText,
   Typography,
@@ -27,9 +28,10 @@ import HistoryIcon from '@mui/icons-material/History';
 import RouteIcon from '@mui/icons-material/Route';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import TuneIcon from '@mui/icons-material/Tune';
+import DeleteIcon from '@mui/icons-material/Delete';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { buildRoute, getSavedRoutes } from '../api/routes';
+import { buildRoute, getSavedRoutes, deleteRoute } from '../api/routes';
 import { describeStep } from '../utils/maneuver';
 import { MAP_TILE_OPTIONS } from '../styles/theme';
 import { usePlaceSearch } from '../hooks/usePlaceSearch';
@@ -203,6 +205,16 @@ function MapPage() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteRoute = async (e, id) => {
+    e.stopPropagation();
+    try {
+      await deleteRoute(id);
+      setHistory(prev => prev.filter(r => r._id !== id));
+    } catch {
+      // ignore
     }
   };
 
@@ -391,13 +403,25 @@ function MapPage() {
           ) : (
             <List dense disablePadding>
               {history.map(saved => (
-                <ListItemButton key={saved._id} onClick={() => loadFromHistory(saved)} sx={{ borderRadius: 1, px: 1 }}>
-                  <ListItemText
-                    primary={saved.name}
-                    secondary={new Date(saved.createdAt).toLocaleDateString('uk-UA')}
-                    slotProps={{ primary: { noWrap: true, sx: { fontSize: 13 } }, secondary: { sx: { fontSize: 11 } } }}
-                  />
-                </ListItemButton>
+                <ListItem
+                  key={saved._id}
+                  disablePadding
+                  secondaryAction={
+                    <Tooltip title="Видалити">
+                      <IconButton edge="end" size="small" onClick={e => handleDeleteRoute(e, saved._id)}>
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  }
+                >
+                  <ListItemButton onClick={() => loadFromHistory(saved)} sx={{ borderRadius: 1, px: 1, pr: 5 }}>
+                    <ListItemText
+                      primary={saved.name}
+                      secondary={new Date(saved.createdAt).toLocaleDateString('uk-UA')}
+                      slotProps={{ primary: { noWrap: true, sx: { fontSize: 13 } }, secondary: { sx: { fontSize: 11 } } }}
+                    />
+                  </ListItemButton>
+                </ListItem>
               ))}
             </List>
           )}

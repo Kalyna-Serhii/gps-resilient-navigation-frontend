@@ -16,3 +16,9 @@ export async function getSavedRoutes() {
   const data = await response.json();
   return data ?? [];
 }
+
+export async function deleteRoute(id) {
+  const response = await apiRequest(`/api/routes/${id}`, { method: 'DELETE' });
+  if (!response.ok) throw new Error('Failed to delete route');
+  return response.json();
+}
