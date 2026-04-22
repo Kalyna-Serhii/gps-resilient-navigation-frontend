@@ -4,9 +4,9 @@ import Header from './Header';
 
 function Layout() {
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <Header />
-      <Box sx={{ flex: 1, display: 'flex' }}>
+      <Box sx={{ flex: 1, display: 'flex', minHeight: 0 }}>
         <Outlet />
       </Box>
     </Box>

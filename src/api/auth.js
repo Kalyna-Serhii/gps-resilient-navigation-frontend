@@ -36,8 +36,10 @@ export async function logout() {
   if (!response.ok) throw new Error(await parseError(response, 'Logout failed'));
 }
 
-export async function refreshTokens() {
-  const response = await fetch('/api/auth/refresh');
+export async function refreshTokens(refreshToken) {
+  const response = await fetch('/api/auth/refresh', {
+    headers: { Authorization: `Bearer ${refreshToken}` },
+  });
   if (!response.ok) throw new Error(await parseError(response, 'Token refresh failed'));
   return response.json();
 }

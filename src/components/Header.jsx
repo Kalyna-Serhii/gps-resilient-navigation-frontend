@@ -1,11 +1,17 @@
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton } from '@mui/material';
 import ExploreIcon from '@mui/icons-material/Explore';
+import MapIcon from '@mui/icons-material/Map';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../api/auth';
+import { useThemeMode } from '../context/ThemeContext';
 
 function Header() {
   const navigate = useNavigate();
+  const { mode, toggleMode } = useThemeMode();
   const token = localStorage.getItem('accessToken');
+  const userName = localStorage.getItem('userName');
 
   const handleLogout = async () => {
     try {
@@ -15,6 +21,7 @@ function Header() {
     }
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userName');
     navigate('/login');
   };
 
@@ -31,18 +38,31 @@ function Header() {
           GPS Resilient Navigation
         </Typography>
 
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Button component={Link} to="/" color="inherit" startIcon={<MapIcon />}>
+            Карта
+          </Button>
+
+          <IconButton onClick={toggleMode} color="inherit">
+            {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+          </IconButton>
+
           {token ? (
-            <Button color="inherit" onClick={handleLogout}>
-              Logout
-            </Button>
+            <>
+              <Typography variant="body1" sx={{ color: 'primary.main' }}>
+                {userName}
+              </Typography>
+              <Button color="inherit" onClick={handleLogout}>
+                Вийти
+              </Button>
+            </>
           ) : (
             <>
               <Button component={Link} to="/login" color="inherit">
-                Login
+                Увійти
               </Button>
               <Button component={Link} to="/register" variant="contained">
-                Register
+                Реєстрація
               </Button>
             </>
           )}

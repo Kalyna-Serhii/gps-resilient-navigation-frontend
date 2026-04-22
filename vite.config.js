@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       port: parseInt(env.PORT),
+      allowedHosts: true,
       proxy: {
         '/api': {
           target: env.BACKEND_URL,

@@ -9,7 +9,12 @@ import {
   Typography,
   Alert,
   Paper,
+  Divider,
+  IconButton,
+  InputAdornment,
 } from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { login } from '../api/auth';
 
 function LoginPage() {
@@ -17,6 +22,7 @@ function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -30,6 +36,7 @@ function LoginPage() {
       const data = await login(form);
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
+      localStorage.setItem('userName', data.user.name);
       navigate('/');
     } catch (err) {
       setError(err.message);
@@ -50,7 +57,7 @@ function LoginPage() {
       >
         <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
           <Typography variant="h4" align="center" gutterBottom>
-            Login
+            Вхід
           </Typography>
 
           {error && (
@@ -71,14 +78,25 @@ function LoginPage() {
               margin="normal"
             />
             <TextField
-              label="Password"
+              label="Пароль"
               name="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               value={form.password}
               onChange={handleChange}
               fullWidth
               required
               margin="normal"
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(p => !p)} edge="end">
+                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
             <Button
               type="submit"
@@ -88,13 +106,24 @@ function LoginPage() {
               disabled={loading}
               sx={{ mt: 2 }}
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Вхід...' : 'Увійти'}
             </Button>
           </Box>
 
+          <Divider sx={{ my: 2 }}>або</Divider>
+
+          <Button
+            fullWidth
+            variant="outlined"
+            startIcon={<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width={18} />}
+            sx={{ borderColor: 'divider', color: 'text.primary', '&:hover': { borderColor: 'text.secondary', backgroundColor: 'action.hover' } }}
+          >
+            Увійти через Google
+          </Button>
+
           <Typography align="center" sx={{ mt: 2 }}>
-            Don&apos;t have an account?{' '}
-            <Link href="/register">Register</Link>
+            Немає акаунту?{' '}
+            <Link href="/register">Реєстрація</Link>
           </Typography>
         </Paper>
       </Box>
