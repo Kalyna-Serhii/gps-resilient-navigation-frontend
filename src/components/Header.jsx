@@ -1,6 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, Tooltip } from '@mui/material';
-import ExploreIcon from '@mui/icons-material/Explore';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -8,60 +6,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../api/auth';
 import { useThemeMode } from '../context/ThemeContext';
-import { getAlertByLocation, getAlerts } from '../api/alerts';
-import { POLL_INTERVAL_MS } from '../utils/constants.js';
+import { useAlert } from '../context/AlertContext';
 
 function AlertIndicator() {
-  const [alert, setAlert] = useState(null);
-  const [hasLocation, setHasLocation] = useState(false);
-  const intervalRef = useRef(null);
-
-  const startPolling = (lat, lng) => {
-    const poll = async () => {
-      try {
-        if (lat != null && lng != null) {
-          const data = await getAlertByLocation(lat, lng);
-          setAlert({ active: data.alertIsActive, region: data.detectedRegion });
-        } else {
-          const data = await getAlerts();
-          setAlert({ active: data.activeCount > 2, region: null });
-        }
-      } catch {
-        // ignore
-      }
-    };
-    poll();
-    clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(poll, POLL_INTERVAL_MS);
-  };
-
-  const requestLocation = () => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        setHasLocation(true);
-        startPolling(pos.coords.latitude, pos.coords.longitude);
-      },
-      () => startPolling(null, null),
-      { timeout: 5000 },
-    );
-  };
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          setHasLocation(true);
-          startPolling(pos.coords.latitude, pos.coords.longitude);
-        },
-        () => startPolling(null, null),
-        { timeout: 5000 },
-      );
-    } else {
-      startPolling(null, null);
-    }
-    return () => clearInterval(intervalRef.current);
-  }, []);
+  const { alert, hasLocation, requestLocation } = useAlert();
 
   if (alert === null) return null;
 
@@ -116,7 +64,7 @@ function Header() {
   return (
     <AppBar position="static" color="transparent" elevation={0}>
       <Toolbar sx={{ minWidth: 0 }}>
-        <ExploreIcon sx={{ mr: 1, color: 'primary.main', flexShrink: 0 }} />
+        <Box component="img" src="/favicon.png" alt="logo" sx={{ width: 28, height: 28, mr: 1, flexShrink: 0 }} />
         <Typography
           variant="h6"
           component={Link}
@@ -124,7 +72,6 @@ function Header() {
           sx={{
             textDecoration: 'none',
             color: 'inherit',
-            flexGrow: 1,
             flexShrink: 1,
             minWidth: 0,
             overflow: 'hidden',
@@ -135,6 +82,8 @@ function Header() {
         >
           GPS Resilient Navigation
         </Typography>
+
+        <Box sx={{ flexGrow: 1 }} />
 
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexShrink: 0 }}>
           {token && <AlertIndicator />}

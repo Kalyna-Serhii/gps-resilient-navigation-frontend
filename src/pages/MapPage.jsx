@@ -31,7 +31,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import DeleteIcon from '@mui/icons-material/Delete';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { buildRoute, getSavedRoutes, deleteRoute } from '../api/routes';
+import { createRoute, getSavedRoutes, getRouteById, deleteRoute } from '../api/routes';
 import { describeStep } from '../utils/maneuver';
 import { MAP_TILE_OPTIONS } from '../styles/theme';
 import { usePlaceSearch } from '../hooks/usePlaceSearch';
@@ -173,7 +173,7 @@ function MapPage() {
     search$.select('Моє місцезнаходження');
   };
 
-  const handleBuildRoute = async () => {
+  const handleCreateRoute = async () => {
     if (!origin || !destination) return;
     setError('');
     setLoading(true);
@@ -191,7 +191,7 @@ function MapPage() {
         return meaningful || parts[0];
       };
       const name = `${shortName(origin$.query)} → ${shortName(dest$.query)}`;
-      const data = await buildRoute({ name, origin, destination });
+      const data = await createRoute({ name, origin, destination });
       setRoutes(data.routes);
       setHistory(prev => [data, ...prev.filter(r => r._id !== data._id)]);
       if (data.routes.length > 0) {
@@ -218,17 +218,26 @@ function MapPage() {
     }
   };
 
-  const loadFromHistory = saved => {
-    setOrigin(saved.origin);
-    setDestination(saved.destination);
-    setRoutes(saved.routes);
-    setSelectedRoute(0);
-    setSteps(saved.routes[0]?.steps || []);
-    origin$.select(saved.name.split(' → ')[0]);
-    dest$.select(saved.name.split(' → ')[1] || '');
-    const coords = saved.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
-    boundsRef.current = L.latLngBounds(coords);
-    setPanel('route');
+  const loadFromHistory = async saved => {
+    setError('');
+    setLoading(true);
+    try {
+      const full = await getRouteById(saved._id);
+      setOrigin(full.origin);
+      setDestination(full.destination);
+      setRoutes(full.routes);
+      setSelectedRoute(0);
+      setSteps(full.routes[0]?.steps || []);
+      origin$.select(full.name.split(' → ')[0]);
+      dest$.select(full.name.split(' → ')[1] || '');
+      const coords = full.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+      boundsRef.current = L.latLngBounds(coords);
+      setPanel('route');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSelectRoute = index => {
@@ -322,7 +331,7 @@ function MapPage() {
       <Button
         variant="contained"
         startIcon={loading ? <CircularProgress size={20} /> : <DirectionsIcon />}
-        onClick={handleBuildRoute}
+        onClick={handleCreateRoute}
         disabled={!origin || !destination || loading}
       >
         Побудувати маршрут
@@ -414,13 +423,17 @@ function MapPage() {
                     </Tooltip>
                   }
                 >
-                  <ListItemButton onClick={() => loadFromHistory(saved)} sx={{ borderRadius: 1, px: 1, pr: 5 }}>
+                  <Box sx={{ px: 1, py: 0.5, minWidth: 0, flex: 1 }}>
                     <ListItemText
+                      onClick={() => loadFromHistory(saved)}
                       primary={saved.name}
                       secondary={new Date(saved.createdAt).toLocaleDateString('uk-UA')}
-                      slotProps={{ primary: { noWrap: true, sx: { fontSize: 13 } }, secondary: { sx: { fontSize: 11 } } }}
+                      slotProps={{
+                        primary: { noWrap: true, sx: { fontSize: 13, cursor: 'pointer', '&:hover': { color: 'primary.main' } } },
+                        secondary: { sx: { fontSize: 11, cursor: 'pointer' } },
+                      }}
                     />
-                  </ListItemButton>
+                  </Box>
                 </ListItem>
               ))}
             </List>
