@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
-import { ThemeContextProvider, useThemeMode } from './context/ThemeContext';
-import { AlertContextProvider } from './context/AlertContext';
+import { ThemeContextProvider } from './context/ThemeContextProvider';
+import { useThemeMode } from './hooks/useThemeMode';
+import { AlertContextProvider } from './context/AlertContextProvider';
 import { buildTheme } from './styles/theme';
 import router from './router';
 

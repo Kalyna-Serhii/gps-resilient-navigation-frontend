@@ -8,9 +8,3 @@ export async function searchPlaces(query, limit = 5) {
   return data.results;
 }
 
-export async function reverseGeocode(lat, lng) {
-  const params = new URLSearchParams({ lat, lng });
-  const response = await apiRequest(`/api/geocode/reverse?${params}`);
-  if (!response.ok) throw new Error('Reverse geocode failed');
-  return response.json();
-}

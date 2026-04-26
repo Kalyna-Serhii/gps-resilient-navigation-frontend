@@ -5,8 +5,8 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../api/auth';
-import { useThemeMode } from '../context/ThemeContext';
-import { useAlert } from '../context/AlertContext';
+import { useThemeMode } from '../hooks/useThemeMode';
+import { useAlert } from '../hooks/useAlert';
 
 function AlertIndicator() {
   const { alert, hasLocation, requestLocation } = useAlert();
@@ -14,12 +14,13 @@ function AlertIndicator() {
   if (alert === null) return null;
 
   const noLocation = !hasLocation;
-  const color = alert.active ? 'error' : 'success';
+  const hasAnyAlert = alert.active || alert.globalActive;
+  const color = alert.active ? 'error' : alert.globalActive ? 'warning' : 'success';
   const label = alert.active ? 'Тривога' : 'Спокійно';
   const regionShort = alert.region?.replace(' область', '');
-  const activeIcon = alert.active ? <WarningAmberIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />;
+  const activeIcon = hasAnyAlert ? <WarningAmberIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />;
   const tooltip = noLocation
-    ? `${alert.active ? 'Є активні тривоги' : 'Тривог немає'} — натисніть щоб визначити ваш регіон`
+    ? `${alert.globalActive ? 'Є активні тривоги в країні' : 'Тривог немає'} — натисніть щоб визначити ваш регіон`
     : alert.region
       ? `${alert.region}: ${alert.active ? 'активна тривога' : 'тривоги немає'}`
       : alert.active
@@ -54,7 +55,7 @@ function Header() {
     try {
       await logout();
     } catch {
-      // ignore
+      void 0;
     }
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');

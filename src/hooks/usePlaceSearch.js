@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { searchPlaces } from '../api/geocode';
 
 export function usePlaceSearch() {
@@ -38,13 +38,13 @@ export function usePlaceSearch() {
     return () => clearTimeout(debounceRef.current);
   }, [query]);
 
-  const select = displayName => {
+  const select = useCallback(displayName => {
     clearTimeout(debounceRef.current);
     skipRef.current = true;
     setQuery(displayName);
     setResults([]);
     setSearched(false);
-  };
+  }, []);
 
   return { query, setQuery, results, searched, select };
 }

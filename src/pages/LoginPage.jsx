@@ -86,7 +86,7 @@ function LoginPage() {
           <Button
             fullWidth
             variant="outlined"
-            startIcon={<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width={18} />}
+            startIcon={<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width={18} alt="Google" />}
             sx={{ 'borderColor': 'divider', 'color': 'text.primary', '&:hover': { borderColor: 'text.secondary', backgroundColor: 'action.hover' } }}
           >
             Увійти через Google
