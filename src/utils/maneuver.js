@@ -1,3 +1,20 @@
+import NearMeIcon from '@mui/icons-material/NearMe';
+import PlaceIcon from '@mui/icons-material/Place';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import TurnLeftIcon from '@mui/icons-material/TurnLeft';
+import TurnRightIcon from '@mui/icons-material/TurnRight';
+import TurnSlightLeftIcon from '@mui/icons-material/TurnSlightLeft';
+import TurnSlightRightIcon from '@mui/icons-material/TurnSlightRight';
+import TurnSharpLeftIcon from '@mui/icons-material/TurnSharpLeft';
+import TurnSharpRightIcon from '@mui/icons-material/TurnSharpRight';
+import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
+import RoundaboutRightIcon from '@mui/icons-material/RoundaboutRight';
+import ForkLeftIcon from '@mui/icons-material/ForkLeft';
+import ForkRightIcon from '@mui/icons-material/ForkRight';
+import RampLeftIcon from '@mui/icons-material/RampLeft';
+import RampRightIcon from '@mui/icons-material/RampRight';
+import MergeIcon from '@mui/icons-material/Merge';
+
 const MOD = {
   'left': 'ліворуч',
   'right': 'праворуч',
@@ -8,6 +25,42 @@ const MOD = {
   'sharp right': 'різко праворуч',
   'uturn': 'розворот',
 };
+
+const DIRECTION_ICONS = {
+  'left': TurnLeftIcon,
+  'right': TurnRightIcon,
+  'straight': ArrowUpwardIcon,
+  'slight left': TurnSlightLeftIcon,
+  'slight right': TurnSlightRightIcon,
+  'sharp left': TurnSharpLeftIcon,
+  'sharp right': TurnSharpRightIcon,
+  'uturn': UTurnLeftIcon,
+};
+
+export function getStepIcon(maneuver) {
+  const type = maneuver?.type;
+  const mod = maneuver?.modifier;
+
+  switch (type) {
+    case 'depart':
+      return NearMeIcon;
+    case 'arrive':
+      return PlaceIcon;
+    case 'roundabout':
+    case 'roundabout turn':
+    case 'exit roundabout':
+      return RoundaboutRightIcon;
+    case 'fork':
+      return mod?.includes('left') ? ForkLeftIcon : ForkRightIcon;
+    case 'on ramp':
+    case 'off ramp':
+      return mod?.includes('left') ? RampLeftIcon : RampRightIcon;
+    case 'merge':
+      return MergeIcon;
+    default:
+      return DIRECTION_ICONS[mod] || ArrowUpwardIcon;
+  }
+}
 
 const join = (...parts) => parts.filter(Boolean).join(' ');
 

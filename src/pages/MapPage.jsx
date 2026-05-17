@@ -8,6 +8,7 @@ import {
   List,
   ListItem,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
   Typography,
   Alert,
@@ -41,7 +42,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { createRoute, getSavedRoutes, getRouteById, deleteRoute } from '../api/routes';
 import { getRoutePois } from '../api/pois';
-import { describeStep } from '../utils/maneuver';
+import { describeStep, getStepIcon } from '../utils/maneuver';
 import { formatPoiHint, AMENITY_COLORS } from '../utils/pois';
 import { MAP_TILE_OPTIONS } from '../styles/theme';
 import { usePlaceSearch } from '../hooks/usePlaceSearch';
@@ -619,6 +620,7 @@ function MapPage() {
                 const poi = stepPois?.[0] ?? null;
                 const isCurrent = routeStarted && i === currentStepIndex;
                 const isLast = i === steps.length - 1;
+                const StepIcon = getStepIcon(step.maneuver);
                 return (
                   <ListItem
                     key={i}
@@ -645,6 +647,9 @@ function MapPage() {
                       }}
                       sx={{ flex: 1, minWidth: 0 }}
                     >
+                      <ListItemIcon sx={{ minWidth: 32 }}>
+                        <StepIcon fontSize="small" color={isCurrent ? 'primary' : 'action'} />
+                      </ListItemIcon>
                       <ListItemText
                         primary={describeStep(step)}
                         secondary={
